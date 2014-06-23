@@ -3,6 +3,7 @@ import giocatoreAutomatico.*;
 import game2048.Location;
 import game2048.Direction;
 import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.Iterator;
 import java.util.Random;
 
