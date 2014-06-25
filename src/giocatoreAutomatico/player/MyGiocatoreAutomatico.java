@@ -3,93 +3,178 @@ import giocatoreAutomatico.*;
 import game2048.Location;
 import game2048.Direction;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Random;
 
 public class MyGiocatoreAutomatico implements GiocatoreAutomatico{
+    private final int xPositions=4;
+    private final int yPositions=4;
     
+    @Override
     public int prossimaMossa(Griglia g){
-        /*Qui faccio un iterazione sugli elementi della HashMap,
-         *sia le Key sia le Value.
-        */
-        Iterator it=g.entrySet().iterator();
-        Location loc, farthest, temp;
+        /*Qui simulo i 4 movimenti eseguiti nella griglia, spostando
+         *le varie piastrelle e unendole quando hanno i valori uguali.
+         *Ad ogni unione aumento le variabili mergedIf, che servono per
+         *indicare qual'è la direzione più conveniente.I vari isMoved
+         *servono per indicare se almeno una piastrella è stata mossa, 
+         *e quindi se bisogna aggiungerne una nuova nella griglia.*/
+        HashMap<Location, Integer> grid=(HashMap<Location, Integer>)g;
+        Location startingPosition, farthest, temp;
         Integer val;
-        int mergedIfUp=0, mergedIfDown=0, mergedIfRight=0, mergedIfLeft=0;
+        int x, y, mergedIfUp=0, mergedIfDown=0, mergedIfRight=0, mergedIfLeft=0, moveTester;
+        boolean isMovedUp=false, isMovedDown=false, isMovedRight=false, isMovedLeft=false;
         
-        /*Qui controllo ogni singolo tile della griglia e controllo
-         *se ci sono delle unioni considerando ogni direzione.Il 
-         *numero totale di fusioni nel caso di ogni direzione vengono
-         *accumulate nelle variabili mergedIfUp, etc...*/
-        while(it.hasNext()){
-            HashMap.Entry tile=(HashMap.Entry)it.next();
-            loc=(Location)tile.getKey();
-            temp=loc;
-            val=(Integer)tile.getValue();
-            
-            //Case UP.
-            do {
-            farthest = temp;
-            temp = farthest.offset(Direction.UP);
-            }while (temp.isValidFor(4) && g.get(temp) == -1);
-            
-            if(temp.isValidFor(4)){
-                    if(g.get(temp)!=-1){
-                        if(g.get(temp).equals(val)){
-                            mergedIfUp++;
+        //Case UP.
+        for(y=1;y<yPositions;y++){
+                for(x=0;x<xPositions;x++){
+                    startingPosition=new Location(x, y);
+                    temp=startingPosition;
+                    val=grid.get(startingPosition);
+                    moveTester=0;
+                    
+                    if(val!=-1){
+                        do {
+                            if(moveTester>0){
+                                isMovedUp=true;
+                            }
+                            farthest = temp;
+                            temp = farthest.offset(Direction.UP);
+                            moveTester++;
+                        }while (temp.isValidFor(4) && grid.get(temp) == -1);
+                        if(temp.isValidFor(4)){
+                            if(val.equals(grid.get(temp))){
+                                grid.put(temp, val*2);
+                                grid.put(startingPosition, -1);
+                                isMovedUp=true;
+                                mergedIfUp++;
+                            }else{
+                                grid.put(farthest, val);
+                                grid.put(startingPosition, -1);
+                            }
+                        }else{
+                            grid.put(farthest, val);
+                            grid.put(startingPosition, -1);
                         }
+                    }
+                 
                 }
             }
             
             //Case DOWN.
-            temp=loc;
+            grid=(HashMap<Location, Integer>)g;
             
-            do {
-            farthest = temp;
-            temp = farthest.offset(Direction.DOWN);
-            }while (temp.isValidFor(4) && g.get(temp) == -1);
-            
-            if(temp.isValidFor(4)){
-                    if(g.get(temp)!=-1){
-                        if(g.get(temp).equals(val)){
-                            mergedIfDown++;
+            for(y=2;y>=0;y--){
+                for(x=0;x<xPositions;x++){
+                    startingPosition=new Location(x, y);
+                    temp=startingPosition;
+                    val=grid.get(startingPosition);
+                    moveTester=0;
+                    
+                    if(val!=-1){
+                        do {
+                            if(moveTester>0){
+                                isMovedDown=true;
+                            }
+                            farthest = temp;
+                            temp = farthest.offset(Direction.DOWN);
+                            moveTester++;
+                        }while (temp.isValidFor(4) && grid.get(temp) == -1);
+                        if(temp.isValidFor(4)){
+                            if(val.equals(grid.get(temp))){
+                                grid.put(temp, val*2);
+                                grid.put(startingPosition, -1);
+                                isMovedDown=true;
+                                mergedIfDown++;
+                            }else{
+                                grid.put(farthest, val);
+                                grid.put(startingPosition, -1);
+                            }
+                        }else{
+                            grid.put(farthest, val);
+                            grid.put(startingPosition, -1);
                         }
+                    }
+                 
                 }
             }
             
             //Case RIGHT.
-            temp=loc;
+            grid=(HashMap<Location, Integer>)g;
             
-            do {
-            farthest = temp;
-            temp = farthest.offset(Direction.RIGHT);
-            }while (temp.isValidFor(4) && g.get(temp) == -1);
-            
-            if(temp.isValidFor(4)){
-                    if(g.get(temp)!=-1){
-                        if(g.get(temp).equals(val)){
-                            mergedIfRight++;
+            for(x=2;x>=0;x--){
+                for(y=0;y<yPositions;y++){
+                    startingPosition=new Location(x, y);
+                    temp=startingPosition;
+                    val=grid.get(startingPosition);
+                    moveTester=0;
+                    
+                    if(val!=-1){
+                        do {
+                            if(moveTester>0){
+                                isMovedRight=true;
+                            }
+                            farthest = temp;
+                            temp = farthest.offset(Direction.RIGHT);
+                            moveTester++;
+                        }while (temp.isValidFor(4) && grid.get(temp) == -1);
+                        if(temp.isValidFor(4)){
+                            if(val.equals(grid.get(temp))){
+                                grid.put(temp, val*2);
+                                grid.put(startingPosition, -1);
+                                isMovedRight=true;
+                                mergedIfRight++;
+                            }else{
+                                grid.put(farthest, val);
+                                grid.put(startingPosition, -1);
+                            }
+                        }else{
+                            grid.put(farthest, val);
+                            grid.put(startingPosition, -1);
                         }
+                    }
+                 
                 }
             }
             
             //Case LEFT.
-            temp=loc;
+            grid=(HashMap<Location, Integer>)g;
             
-            do {
-            farthest = temp;
-            temp = farthest.offset(Direction.LEFT);
-            }while (temp.isValidFor(4) && g.get(temp) == -1);
-            
-            if(temp.isValidFor(4)){
-                    if(g.get(temp)!=-1){
-                        if(g.get(temp).equals(val)){
-                            mergedIfLeft++;
+            for(x=1;x<xPositions;x++){
+                for(y=0;y<yPositions;y++){
+                    startingPosition=new Location(x, y);
+                    temp=startingPosition;
+                    val=grid.get(startingPosition);
+                    moveTester=0;
+                    
+                    if(val!=-1){
+                        do {
+                            if(moveTester>0){
+                                isMovedLeft=true;
+                            }
+                            farthest = temp;
+                            temp = farthest.offset(Direction.LEFT);
+                            moveTester++;
+                        }while (temp.isValidFor(4) && grid.get(temp) == -1);
+                        if(temp.isValidFor(4)){
+                            if(val.equals(grid.get(temp))){
+                                grid.put(temp, val*2);
+                                grid.put(startingPosition, -1);
+                                isMovedLeft=true;
+                                mergedIfLeft++;
+                            }else{
+                                grid.put(farthest, val);
+                                grid.put(startingPosition, -1);
+                            }
+                        }else{
+                            grid.put(farthest, val);
+                            grid.put(startingPosition, -1);
                         }
+                    }
+                 
                 }
             }
-            
-        }
+        
+    
+    
         int better, rand;
         Random r=new Random();
         boolean upBetter=false, downBetter=false, rightBetter=false, leftBetter=false;
@@ -178,6 +263,5 @@ public class MyGiocatoreAutomatico implements GiocatoreAutomatico{
             }
         }
     }
-   
     
 }
