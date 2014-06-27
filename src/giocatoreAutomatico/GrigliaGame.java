@@ -2,49 +2,11 @@ package giocatoreAutomatico;
 import game2048.Location;
 import game2048.Direction;
 import java.util.HashMap;
-import java.util.Random;
 
 
-public class GrigliaGame implements Griglia{
-
-    private final HashMap<Location, Integer> map;
+public class GrigliaGame extends HashMap<Location, Integer> implements Griglia{
     private final int xPositions=4;
     private final int yPositions=4;
-    
-    public GrigliaGame(){
-        this.map=new HashMap();
-        
-        for(int j=0;j<this.yPositions;j++){
-            for(int i=0;i<this.xPositions;i++){
-                this.map.put(new Location(i, j), -1);
-            }
-        }
-        this.newRandomTile();
-    }
-
-    /**
-     * Questo metodo aggiunge nella griglia una nuova casella, all'
-     * inizio del gioco e dopo ogni mossa.
-     */
-    public void newRandomTile(){
-        int x, y, val, newValue;
-        Random r=new Random();
-        boolean found=false;
-        Location loc;
-        
-        do{
-            x=r.nextInt(4);
-            y=r.nextInt(4);
-            loc=new Location(x, y);
-            val=this.map.get(loc);
-            
-            if(val==-1){
-                newValue = new Random().nextDouble() < 0.9 ? 2 : 4;
-                this.modifyTile(loc, newValue);
-                found=true;
-            }
-        }while(!found);
-    }
     
     /**
      * Questo metodo viene usato per modificare le caselle, e viene
@@ -54,7 +16,7 @@ public class GrigliaGame implements Griglia{
      * @param i 
      */
     public void modifyTile(Location loc, Integer i){
-        this.map.put(loc, i);
+        this.put(loc, i);
     }
     
     /**
@@ -63,7 +25,7 @@ public class GrigliaGame implements Griglia{
      * @param loc 
      */
     public void removeTile(Location loc){
-        this.map.put(loc, -1);
+        this.put(loc, -1);
     }
     
     /**
@@ -72,8 +34,7 @@ public class GrigliaGame implements Griglia{
      * @param d 
      */
     public void move(Direction d){
-        boolean isMoved=false;
-        int x, y, val, moveTester;
+        int x, y, val;
         Location temp, farthest, startingPosition;
         
         if(d==Direction.UP){
@@ -81,23 +42,17 @@ public class GrigliaGame implements Griglia{
                 for(x=0;x<xPositions;x++){
                     startingPosition=new Location(x, y);
                     temp=startingPosition;
-                    val=this.map.get(startingPosition);
-                    moveTester=0;
+                    val=this.get(startingPosition);
                     
                     if(val!=-1){
                         do {
-                            if(moveTester>0){
-                                isMoved=true;
-                            }
                             farthest = temp;
                             temp = farthest.offset(d);
-                            moveTester++;
-                        }while (temp.isValidFor(4) && this.map.get(temp) == -1);
+                        }while (temp.isValidFor(4) && this.get(temp) == -1);
                         if(temp.isValidFor(4)){
-                            if(val==this.map.get(temp)){
+                            if(val==this.get(temp)){
                                 this.modifyTile(temp, val*2);
                                 this.removeTile(startingPosition);
-                                isMoved=true;
                             }else{
                                 this.modifyTile(farthest, val);
                                 this.removeTile(startingPosition);
@@ -115,23 +70,17 @@ public class GrigliaGame implements Griglia{
                 for(x=0;x<xPositions;x++){
                     startingPosition=new Location(x, y);
                     temp=startingPosition;
-                    val=this.map.get(startingPosition);
-                    moveTester=0;
+                    val=this.get(startingPosition);
                     
                     if(val!=-1){
                         do {
-                            if(moveTester>0){
-                                isMoved=true;
-                            }
                             farthest = temp;
                             temp = farthest.offset(d);
-                            moveTester++;
-                        }while (temp.isValidFor(4) && this.map.get(temp) == -1);
+                        }while (temp.isValidFor(4) && this.get(temp) == -1);
                         if(temp.isValidFor(4)){
-                            if(val==this.map.get(temp)){
+                            if(val==this.get(temp)){
                                 this.modifyTile(temp, val*2);
                                 this.removeTile(startingPosition);
-                                isMoved=true;
                             }else{
                                 this.modifyTile(farthest, val);
                                 this.removeTile(startingPosition);
@@ -149,23 +98,17 @@ public class GrigliaGame implements Griglia{
                 for(y=0;y<yPositions;y++){
                     startingPosition=new Location(x, y);
                     temp=startingPosition;
-                    val=this.map.get(startingPosition);
-                    moveTester=0;
+                    val=this.get(startingPosition);
                     
                     if(val!=-1){
                         do {
-                            if(moveTester>0){
-                                isMoved=true;
-                            }
                             farthest = temp;
                             temp = farthest.offset(d);
-                            moveTester++;
-                        }while (temp.isValidFor(4) && this.map.get(temp) == -1);
+                        }while (temp.isValidFor(4) && this.get(temp) == -1);
                         if(temp.isValidFor(4)){
-                            if(val==this.map.get(temp)){
+                            if(val==this.get(temp)){
                                 this.modifyTile(temp, val*2);
                                 this.removeTile(startingPosition);
-                                isMoved=true;
                             }else{
                                 this.modifyTile(farthest, val);
                                 this.removeTile(startingPosition);
@@ -183,23 +126,17 @@ public class GrigliaGame implements Griglia{
                 for(y=0;y<yPositions;y++){
                     startingPosition=new Location(x, y);
                     temp=startingPosition;
-                    val=this.map.get(startingPosition);
-                    moveTester=0;
+                    val=this.get(startingPosition);
                     
                     if(val!=-1){
                         do {
-                            if(moveTester>0){
-                                isMoved=true;
-                            }
                             farthest = temp;
                             temp = farthest.offset(d);
-                            moveTester++;
-                        }while (temp.isValidFor(4) && this.map.get(temp) == -1);
+                        }while (temp.isValidFor(4) && this.get(temp) == -1);
                         if(temp.isValidFor(4)){
-                            if(val==this.map.get(temp)){
+                            if(val==this.get(temp)){
                                 this.modifyTile(temp, val*2);
                                 this.removeTile(startingPosition);
-                                isMoved=true;
                             }else{
                                 this.modifyTile(farthest, val);
                                 this.removeTile(startingPosition);
@@ -214,9 +151,6 @@ public class GrigliaGame implements Griglia{
             }
         }
         
-        if(isMoved){
-            this.newRandomTile();
-        }
     }
     
 }
