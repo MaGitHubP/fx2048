@@ -9,11 +9,11 @@ public class GrigliaGame extends HashMap<Location, Integer> implements Griglia{
     private final int yPositions=4;
     
     /**
-     * Questo metodo viene usato per modificare le caselle, e viene
-     * usato sia durante l'aggiunta casuale di una casella, sia durante
-     * gli spostamenti.
-     * @param loc
-     * @param i 
+     * Questo metodo viene usato per modificare le caselle, in particolare
+     * durante gli spostamenti delle piastrelle quando viene eseguito il
+     * metodo move.
+     * @param loc La locazione della griglia da modificare.
+     * @param i Il valore della griglia da modificare.
      */
     public void modifyTile(Location loc, Integer i){
         this.put(loc, i);
@@ -22,7 +22,7 @@ public class GrigliaGame extends HashMap<Location, Integer> implements Griglia{
     /**
      * Questo metodo viene usato per mettere le caselle vuote(quindi 
      * con valore -1) nella griglia durante le modifiche di spostamento.
-     * @param loc 
+     * @param loc La locazione della griglia.
      */
     public void removeTile(Location loc){
         this.put(loc, -1);
@@ -31,10 +31,12 @@ public class GrigliaGame extends HashMap<Location, Integer> implements Griglia{
     /**
      * Questo metodo rappresenta mossa del giocatore(automatico), 
      * aggiornando, di conseguenza, la griglia.
-     * @param d 
+     * @param d La direzione messa in input.
+     * @return Il numero di valori uniti durante il movimento.
      */
-    public void move(Direction d){
-        int x, y, val;
+    public int move(Direction d){
+        int x, y, merged=0;
+        Integer val;
         Location temp, farthest, startingPosition;
         
         if(d==Direction.UP){
@@ -50,9 +52,10 @@ public class GrigliaGame extends HashMap<Location, Integer> implements Griglia{
                             temp = farthest.offset(d);
                         }while (temp.isValidFor(4) && this.get(temp) == -1);
                         if(temp.isValidFor(4)){
-                            if(val==this.get(temp)){
+                            if(val.equals(this.get(temp))){
                                 this.modifyTile(temp, val*2);
                                 this.removeTile(startingPosition);
+                                merged++;
                             }else{
                                 this.modifyTile(farthest, val);
                                 this.removeTile(startingPosition);
@@ -78,9 +81,10 @@ public class GrigliaGame extends HashMap<Location, Integer> implements Griglia{
                             temp = farthest.offset(d);
                         }while (temp.isValidFor(4) && this.get(temp) == -1);
                         if(temp.isValidFor(4)){
-                            if(val==this.get(temp)){
+                            if(val.equals(this.get(temp))){
                                 this.modifyTile(temp, val*2);
                                 this.removeTile(startingPosition);
+                                merged++;
                             }else{
                                 this.modifyTile(farthest, val);
                                 this.removeTile(startingPosition);
@@ -106,9 +110,10 @@ public class GrigliaGame extends HashMap<Location, Integer> implements Griglia{
                             temp = farthest.offset(d);
                         }while (temp.isValidFor(4) && this.get(temp) == -1);
                         if(temp.isValidFor(4)){
-                            if(val==this.get(temp)){
+                            if(val.equals(this.get(temp))){
                                 this.modifyTile(temp, val*2);
                                 this.removeTile(startingPosition);
+                                merged++;
                             }else{
                                 this.modifyTile(farthest, val);
                                 this.removeTile(startingPosition);
@@ -134,9 +139,10 @@ public class GrigliaGame extends HashMap<Location, Integer> implements Griglia{
                             temp = farthest.offset(d);
                         }while (temp.isValidFor(4) && this.get(temp) == -1);
                         if(temp.isValidFor(4)){
-                            if(val==this.get(temp)){
+                            if(val.equals(this.get(temp))){
                                 this.modifyTile(temp, val*2);
                                 this.removeTile(startingPosition);
+                                merged++;
                             }else{
                                 this.modifyTile(farthest, val);
                                 this.removeTile(startingPosition);
@@ -150,7 +156,7 @@ public class GrigliaGame extends HashMap<Location, Integer> implements Griglia{
                 }
             }
         }
-        
+        return merged;
     }
     
 }

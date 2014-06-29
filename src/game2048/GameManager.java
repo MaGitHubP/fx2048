@@ -557,4 +557,8 @@ public class GameManager extends Group {
             resetGame();
         }
     }
+    
+    public Map<Location, Tile> getGrid(){
+        return this.gameGrid;
+    }
 }

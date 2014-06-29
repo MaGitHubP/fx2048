@@ -1,5 +1,9 @@
 package game2048;
 
+import giocatoreAutomatico.*;
+import giocatoreAutomatico.player.MyGiocatoreAutomatico;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.application.ConditionalFeature;
@@ -36,7 +40,16 @@ public class Game2048 extends Application {
 
         Scene scene = new Scene(root, 600, 720);
         scene.getStylesheets().add("game2048/game.css");
-        addKeyHandler(scene);
+        /*------------------------------------------------------*/
+        MyGiocatoreAutomatico giocAutom;
+        try{
+            giocAutom=(MyGiocatoreAutomatico)GiocatoreAutomatico.getGiocatoreAutomatico();
+            automaticPlayerChoice(scene, giocAutom);
+        }catch(Exception e){
+            System.out.println(e);
+        }
+        /*------------------------------------------------------*/
+        addKeyHandler(scene);//Da togliere temporaneamente.
         addSwipeHandlers(scene);
 
         if (isARMDevice()) {
@@ -77,7 +90,43 @@ public class Game2048 extends Application {
             gameManager.move(direction);
         });
     }
-
+    /*----------------------------------------------------------------------*/
+    private void automaticPlayerChoice(Scene scene, MyGiocatoreAutomatico giocAutom){
+        Location l;
+        Tile t;
+        Integer i;
+        int dir;
+        GrigliaGame g=new GrigliaGame();
+        HashMap<Location, Tile> g2=(HashMap<Location, Tile>)gameManager.getGrid();
+        Iterator it=g2.entrySet().iterator();
+        while(it.hasNext()){
+            HashMap.Entry temp=(HashMap.Entry)it.next();
+            l=(Location)temp.getKey();
+            t=g2.get(l);
+            if(t==null){
+                i=-1;
+            }else{
+                i=t.getValue();
+            }
+                    
+            g.modifyTile(l, i);
+        }
+        
+        Direction direction;
+        dir=giocAutom.prossimaMossa(g);
+        if(dir==0){
+            direction=Direction.UP;
+        }else if(dir==1){
+            direction=Direction.RIGHT;
+        }else if(dir==2){
+            direction=Direction.DOWN;
+        }else{
+            direction=Direction.LEFT;
+        }
+        gameManager.move(direction);
+            
+    }
+/*---------------------------------------------------------------------------*/
     private void addSwipeHandlers(Scene scene) {
         scene.setOnSwipeUp(e -> gameManager.move(Direction.UP));
         scene.setOnSwipeRight(e -> gameManager.move(Direction.RIGHT));
