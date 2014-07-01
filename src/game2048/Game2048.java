@@ -9,11 +9,20 @@ import javafx.application.Application;
 import javafx.application.ConditionalFeature;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
+import javafx.geometry.Insets;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 /**
@@ -23,6 +32,7 @@ public class Game2048 extends Application {
 
     private GameManager gameManager;
     private Bounds gameBounds;
+    private MyGiocatoreAutomatico giocAutom;
 
     @Override
     public void start(Stage primaryStage) {
@@ -40,17 +50,50 @@ public class Game2048 extends Application {
 
         Scene scene = new Scene(root, 600, 720);
         scene.getStylesheets().add("game2048/game.css");
-        /*------------------------------------------------------*/
-        MyGiocatoreAutomatico giocAutom;
-        try{
-            giocAutom=(MyGiocatoreAutomatico)GiocatoreAutomatico.getGiocatoreAutomatico();
-            automaticPlayerChoice(scene, giocAutom);
-        }catch(Exception e){
-            System.out.println(e);
-        }
-        /*------------------------------------------------------*/
-        addKeyHandler(scene);//Da togliere temporaneamente.
+        
+        VBox vbox=new VBox();
+        vbox.setPadding(new Insets(250, 250, 250, 250));
+        vbox.setSpacing(5);
+        
+        HBox hbox1=new HBox(), hbox2=new HBox(), hbox3=new HBox(), hbox4=new HBox();
+        hbox2.setPadding(new Insets(10, 250, 10, 250));
+        hbox3.setPadding(new Insets(10, 250, 10, 250));
+        
+        Font font=Font.font("Serif", 25);
+        Text text1=new Text("Vuoi giocare con il giocatore automatico?");
+        text1.setFont(font);
+        text1.setFill(Color.BLUE);
+        Text text2=new Text("NB:Durante il gioco automatico premi un tasto a caso per fare la prossima mossa.\nDurante il gioco manuale, premi 'a' per lasciare una mossa al giocatore automatico.");
+        text2.setFill(Color.BLUE);
+        
+        Button autoPlayYes = new Button();
+        autoPlayYes.setText("Si");
+        autoPlayYes.setOnAction(new EventHandler<ActionEvent>() {
+            
+            @Override
+            public void handle(ActionEvent event) {
+                try{
+                giocAutom=(MyGiocatoreAutomatico)GiocatoreAutomatico.getGiocatoreAutomatico();
+                    addAutoPlayHandler(scene, giocAutom);
+                }catch(Exception e){
+                    System.out.println(e);
+                }
+                root.getChildren().remove(vbox);
+            }
+        });
+        
+        Button autoPlayNo = new Button();
+        autoPlayNo.setText("No");
+        autoPlayNo.setOnAction(new EventHandler<ActionEvent>() {
+            
+            @Override
+            public void handle(ActionEvent event) {
+                addKeyHandler(scene);
+                root.getChildren().remove(vbox);
+            }
+        });
         addSwipeHandlers(scene);
+        
 
         if (isARMDevice()) {
             primaryStage.setFullScreen(true);
@@ -60,6 +103,13 @@ public class Game2048 extends Application {
         if (Platform.isSupported(ConditionalFeature.INPUT_TOUCH)) {
             scene.setCursor(Cursor.NONE);
         }
+        
+        hbox1.getChildren().add(text1);
+        hbox2.getChildren().add(autoPlayYes);
+        hbox3.getChildren().add(autoPlayNo);
+        hbox4.getChildren().add(text2);
+        vbox.getChildren().addAll(hbox1, hbox2, hbox3, hbox4);
+        root.getChildren().add(vbox);
 
         primaryStage.setTitle("2048FX");
         primaryStage.setScene(scene);
@@ -83,6 +133,16 @@ public class Game2048 extends Application {
                 gameManager.restoreSession();
                 return;
             }
+            if(keyCode.equals(KeyCode.A)){
+                try{
+                this.giocAutom=(MyGiocatoreAutomatico)GiocatoreAutomatico.getGiocatoreAutomatico();
+                    Direction direction=automaticPlayerChoice(this.giocAutom);
+                    gameManager.move(direction);
+                }catch(Exception e){
+                    System.out.println(e);
+                }
+                return;
+            }
             if (keyCode.isArrowKey() == false) {
                 return;
             }
@@ -90,8 +150,23 @@ public class Game2048 extends Application {
             gameManager.move(direction);
         });
     }
-    /*----------------------------------------------------------------------*/
-    private void automaticPlayerChoice(Scene scene, MyGiocatoreAutomatico giocAutom){
+    
+    private void addAutoPlayHandler(Scene scene, MyGiocatoreAutomatico giocAutom){
+        scene.setOnKeyPressed(ke -> {
+           Direction direction=automaticPlayerChoice(giocAutom);
+            gameManager.move(direction); 
+        });
+    }
+    
+    /**
+     * Qui faccio "sincronizzare" la mia griglia con la griglia del programma 
+     * principale, cosi da mandare la situazione di gioco attuale al metodo 
+     * prossimaMossa.Per far ciò ho dovuto aggiungere il metodo getGrid in 
+     * GameManager, in quanto la griglia era private.
+     * @param giocAutom Il giocatore automatico.
+     * @return La direzione ottenuta da prossimaMossa.
+     */
+    private Direction automaticPlayerChoice(MyGiocatoreAutomatico giocAutom){
         Location l;
         Tile t;
         Integer i;
@@ -109,7 +184,7 @@ public class Game2048 extends Application {
                 i=t.getValue();
             }
                     
-            g.modifyTile(l, i);
+            g.put(l, i);
         }
         
         Direction direction;
@@ -123,10 +198,10 @@ public class Game2048 extends Application {
         }else{
             direction=Direction.LEFT;
         }
-        gameManager.move(direction);
-            
+        
+        return direction;
     }
-/*---------------------------------------------------------------------------*/
+    
     private void addSwipeHandlers(Scene scene) {
         scene.setOnSwipeUp(e -> gameManager.move(Direction.UP));
         scene.setOnSwipeRight(e -> gameManager.move(Direction.RIGHT));

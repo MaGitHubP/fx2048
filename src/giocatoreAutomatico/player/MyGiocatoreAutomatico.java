@@ -4,6 +4,11 @@ import game2048.Direction;
 import java.util.Random;
 
 public class MyGiocatoreAutomatico implements GiocatoreAutomatico{
+    private static boolean isLastUp;
+    private static boolean isLastDown;
+    private static boolean isLastRight;
+    private static boolean isLastLeft;
+    
     /**
      * Questo metodo serve al giocatore automatico per decidere la 
      * direzione più conveniente da eseguire, basandosi sulla griglia 
@@ -101,27 +106,95 @@ public class MyGiocatoreAutomatico implements GiocatoreAutomatico{
             }
         }
         
+        /*I vari isLast sono identificatori statici che indicano qual è stata 
+         *l'ultima direzione messa in input, dunque servono per evitare  
+         *situazioni di stallo nel caso per qualche motivo una direzione venisse 
+         *scelta più volte, e quindi ripetuta all'infinito.*/
         if(better>mergedIfLeft){
             if(upBetter){
+                if(isLastUp){
+                    rand=r.nextInt(3);
+                    switch(rand){
+                        case 0:return 1;
+                        case 1:return 2;
+                        case 2:return 3;
+                    }
+                }
+                isLastUp=true;
+                isLastDown=false;
+                isLastRight=false;
+                isLastLeft=false;
                 return 0;
             }else if(downBetter){
+                if(isLastDown){
+                    rand=r.nextInt(3);
+                    switch(rand){
+                        case 0:return 0;
+                        case 1:return 1;
+                        case 2:return 3;
+                    }
+                }
+                isLastUp=false;
+                isLastDown=true;
+                isLastRight=false;
+                isLastLeft=false;
                 return 2;
             }else{
+                if(isLastRight){
+                    rand=r.nextInt(3);
+                    switch(rand){
+                        case 0:return 0;
+                        case 1:return 2;
+                        case 2:return 3;
+                    }
+                }
+                isLastUp=false;
+                isLastDown=false;
+                isLastRight=true;
+                isLastLeft=false;
                 return 1;
             }
         }else if(better<mergedIfLeft){
+            if(isLastLeft){
+                rand=r.nextInt(3);
+                switch(rand){
+                    case 0:return 0;
+                    case 1:return 1;
+                    case 2:return 2;
+                }
+            }
+            isLastUp=false;
+            isLastDown=false;
+            isLastRight=false;
+            isLastLeft=true;
             return 3;
         }else{
             rand=r.nextInt(2);
             if(rand==0){
                 if(upBetter){
+                    isLastUp=true;
+                    isLastDown=false;
+                    isLastRight=false;
+                    isLastLeft=false;
                     return 0;
                 }else if(downBetter){
+                    isLastUp=false;
+                    isLastDown=true;
+                    isLastRight=false;
+                    isLastLeft=false;
                     return 2;
                 }else{
+                    isLastUp=false;
+                    isLastDown=false;
+                    isLastRight=true;
+                    isLastLeft=false;
                     return 1;
                 }
             }else{
+                isLastUp=false;
+                isLastDown=false;
+                isLastRight=false;
+                isLastLeft=true;
                 return 3;
             }
         }
