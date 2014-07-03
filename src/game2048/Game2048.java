@@ -1,7 +1,6 @@
 package game2048;
 
 import giocatoreAutomatico.*;
-import giocatoreAutomatico.player.MyGiocatoreAutomatico;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.logging.Logger;
@@ -32,7 +31,7 @@ public class Game2048 extends Application {
 
     private GameManager gameManager;
     private Bounds gameBounds;
-    private MyGiocatoreAutomatico giocAutom;
+    private GiocatoreAutomatico giocAutom;
 
     @Override
     public void start(Stage primaryStage) {
@@ -73,7 +72,7 @@ public class Game2048 extends Application {
             @Override
             public void handle(ActionEvent event) {
                 try{
-                giocAutom=(MyGiocatoreAutomatico)GiocatoreAutomatico.getGiocatoreAutomatico();
+                giocAutom=(GiocatoreAutomatico)GiocatoreAutomatico.getGiocatoreAutomatico();
                     addAutoPlayHandler(scene, giocAutom);
                 }catch(Exception e){
                     System.out.println(e);
@@ -135,7 +134,7 @@ public class Game2048 extends Application {
             }
             if(keyCode.equals(KeyCode.A)){
                 try{
-                this.giocAutom=(MyGiocatoreAutomatico)GiocatoreAutomatico.getGiocatoreAutomatico();
+                this.giocAutom=(GiocatoreAutomatico)GiocatoreAutomatico.getGiocatoreAutomatico();
                     Direction direction=automaticPlayerChoice(this.giocAutom);
                     gameManager.move(direction);
                 }catch(Exception e){
@@ -151,7 +150,7 @@ public class Game2048 extends Application {
         });
     }
     
-    private void addAutoPlayHandler(Scene scene, MyGiocatoreAutomatico giocAutom){
+    private void addAutoPlayHandler(Scene scene, GiocatoreAutomatico giocAutom){
         scene.setOnKeyPressed(ke -> {
            Direction direction=automaticPlayerChoice(giocAutom);
             gameManager.move(direction); 
@@ -166,7 +165,7 @@ public class Game2048 extends Application {
      * @param giocAutom Il giocatore automatico.
      * @return La direzione ottenuta da prossimaMossa.
      */
-    private Direction automaticPlayerChoice(MyGiocatoreAutomatico giocAutom){
+    private Direction automaticPlayerChoice(GiocatoreAutomatico giocAutom){
         Location l;
         Tile t;
         Integer i;

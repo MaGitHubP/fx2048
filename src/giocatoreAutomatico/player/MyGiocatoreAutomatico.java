@@ -1,9 +1,12 @@
 package giocatoreAutomatico.player;
 import giocatoreAutomatico.*;
 import game2048.Direction;
+import game2048.Location;
 import java.util.Random;
 
 public class MyGiocatoreAutomatico implements GiocatoreAutomatico{
+    private final int xPositions=4;
+    private final int yPositions=4;
     private static boolean isLastUp;
     private static boolean isLastDown;
     private static boolean isLastRight;
@@ -22,24 +25,135 @@ public class MyGiocatoreAutomatico implements GiocatoreAutomatico{
          *le varie piastrelle e unendole quando hanno i valori uguali.
          *Ad ogni unione aumento le variabili mergedIf, che servono per
          *indicare qual'è la direzione più conveniente.*/
-        GrigliaGame grid=(GrigliaGame)g;
-        int mergedIfUp, mergedIfDown, mergedIfRight, mergedIfLeft;
+        int x, y;
+        Integer val;
+        Location temp, farthest, startingPosition;
+        Griglia grid=g, grid2=grid;
+        int mergedIfUp=0, mergedIfDown=0, mergedIfRight=0, mergedIfLeft=0;
         
         //Case UP.
-        mergedIfUp=grid.move(Direction.UP);
+        for(y=1;y<yPositions;y++){
+                for(x=0;x<xPositions;x++){
+                    startingPosition=new Location(x, y);
+                    temp=startingPosition;
+                    val=grid.get(startingPosition);
+                    
+                    if(val!=-1){
+                        do {
+                            farthest = temp;
+                            temp = farthest.offset(Direction.UP);
+                        }while (temp.isValidFor(4) && grid.get(temp) == -1);
+                        if(temp.isValidFor(4)){
+                            if(val.equals(grid.get(temp))){
+                                grid2.put(temp, val*2);
+                                grid2.put(startingPosition, -1);
+                                mergedIfUp++;
+                            }else{
+                                grid2.put(farthest, val);
+                                grid2.put(startingPosition, -1);
+                            }
+                        }else{
+                            grid2.put(farthest, val);
+                            grid2.put(startingPosition, -1);
+                        }
+                    }
+                 
+                }
+            }
             
         //Case DOWN.
-        grid=(GrigliaGame)g;
-        mergedIfDown=grid.move(Direction.DOWN);
+        grid2=grid;
+        for(y=2;y>=0;y--){
+                for(x=0;x<xPositions;x++){
+                    startingPosition=new Location(x, y);
+                    temp=startingPosition;
+                    val=grid.get(startingPosition);
+                    
+                    if(val!=-1){
+                        do {
+                            farthest = temp;
+                            temp = farthest.offset(Direction.DOWN);
+                        }while (temp.isValidFor(4) && grid.get(temp) == -1);
+                        if(temp.isValidFor(4)){
+                            if(val.equals(grid.get(temp))){
+                                grid2.put(temp, val*2);
+                                grid2.put(startingPosition, -1);
+                                mergedIfDown++;
+                            }else{
+                                grid2.put(farthest, val);
+                                grid2.put(startingPosition, -1);
+                            }
+                        }else{
+                            grid2.put(farthest, val);
+                            grid2.put(startingPosition, -1);
+                        }
+                    }
+                 
+                }
+            }
             
             
         //Case RIGHT.
-        grid=(GrigliaGame)g;
-        mergedIfRight=grid.move(Direction.RIGHT);
+        grid2=grid;
+        for(x=2;x>=0;x--){
+                for(y=0;y<yPositions;y++){
+                    startingPosition=new Location(x, y);
+                    temp=startingPosition;
+                    val=grid.get(startingPosition);
+                    
+                    if(val!=-1){
+                        do {
+                            farthest = temp;
+                            temp = farthest.offset(Direction.RIGHT);
+                        }while (temp.isValidFor(4) && grid.get(temp) == -1);
+                        if(temp.isValidFor(4)){
+                            if(val.equals(grid.get(temp))){
+                                grid2.put(temp, val*2);
+                                grid2.put(startingPosition, -1);
+                                mergedIfRight++;
+                            }else{
+                                grid2.put(farthest, val);
+                                grid2.put(startingPosition, -1);
+                            }
+                        }else{
+                            grid2.put(farthest, val);
+                            grid2.put(startingPosition, -1);
+                        }
+                    }
+                 
+                }
+            }
             
         //Case LEFT.
-        grid=(GrigliaGame)g;
-        mergedIfLeft=grid.move(Direction.LEFT);
+        grid2=grid;
+        for(x=1;x<xPositions;x++){
+                for(y=0;y<yPositions;y++){
+                    startingPosition=new Location(x, y);
+                    temp=startingPosition;
+                    val=grid.get(startingPosition);
+                    
+                    if(val!=-1){
+                        do {
+                            farthest = temp;
+                            temp = farthest.offset(Direction.LEFT);
+                        }while (temp.isValidFor(4) && grid.get(temp) == -1);
+                        if(temp.isValidFor(4)){
+                            if(val.equals(grid.get(temp))){
+                                grid2.put(temp, val*2);
+                                grid2.put(startingPosition, -1);
+                                mergedIfLeft++;
+                            }else{
+                                grid2.put(farthest, val);
+                                grid2.put(startingPosition, -1);
+                            }
+                        }else{
+                            grid2.put(farthest, val);
+                            grid2.put(startingPosition, -1);
+                        }
+                    }
+                 
+                }
+            }
         
     
     
